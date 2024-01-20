@@ -5,12 +5,11 @@ namespace WebApi
 {
     public class QueryFileManager
     {
-
-
+        private static string filePath = "userStatisticsRequests.json";
+        private static readonly SemaphoreSlim fileAccessSemaphore = new SemaphoreSlim(1, 1);
+        
         public static List<UserStatisticsRequestInfo> LoadPendingUserStatisticsRequests()
         {
-            string filePath = "userStatisticsRequests.json";
-
             List<UserStatisticsRequestInfo> existingRequests;
 
             try
@@ -31,8 +30,6 @@ namespace WebApi
 
         public static void SaveUserStatisticsRequest(UserStatisticsRequestInfo requestInfo)
         {
-            string filePath = "userStatisticsRequests.json";
-
             List<UserStatisticsRequestInfo> existingRequests = LoadPendingUserStatisticsRequests();
 
             existingRequests.Add(requestInfo);
@@ -52,8 +49,6 @@ namespace WebApi
 
         public static void SavePendingRequests(List<UserStatisticsRequestInfo> pendingRequests)
         {
-            string filePath = "userStatisticsRequests.json";
-
             try
             {
                 var updatedJson = JsonConvert.SerializeObject(pendingRequests);
@@ -67,7 +62,6 @@ namespace WebApi
             }
         }
 
-        private static readonly SemaphoreSlim fileAccessSemaphore = new SemaphoreSlim(1, 1);
 
         public static async Task RemoveProcessedRequestAsync(Guid queryId)
         {
